@@ -1,2 +1,48 @@
-# twitch-chat-parser
-The app allows you to parse messages from the chat of any existing channel on [twitch.tv] using IRC
+## Возможности
+
+- Подключение к Twitch.tv через учетные данные пользователя.
+- Парсинг сообщений чата в реальном времени из заданного канала.
+
+---
+
+### Необходимые требования
+Перед началом убедитесь, что у вас установлено:
+
+- **Go** (версии 1.18 или выше)
+- **Учетная запись Twitch.tv**
+
+---
+
+### Установка
+
+1. **Клонируйте репозиторий**  
+   Скопируйте этот репозиторий на свой компьютер:
+   ```bash
+   git clone https://github.com/your-repository/twitch-chat-parser.git
+
+   cd twitch-chat-parser
+   ```
+
+2. **Установите зависимости**  
+Используйте встроенный инструмент Go для установки необходимых модулей:
+    ```bash
+    go mod tidy
+    ```
+
+3. **Создайте файл ```.env```**  
+В корневой папке проекта создайте файл .env со следующей структурой:
+    ```env
+    USERNAME=your_twitch_username
+    CHANNEL=channel_name
+    TOKEN=oauth:your_twitch_oauth_token
+    ```
+
+> С подробной информацией о получении OAuth токена можно ознакомиться в [документации Twitch](https://dev.twitch.tv/docs/api/get-started/)
+
+---
+
+### Запуск
+Запустите приложение:
+```bash
+go run main.go
+```
