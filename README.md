@@ -34,7 +34,7 @@
     ```env
     USERNAME=your_twitch_username
     CHANNEL=channel_name
-    TOKEN=oauth:your_twitch_oauth_token
+    TOKEN=your_twitch_oauth_token
     ```
 
 > С подробной информацией о получении OAuth токена можно ознакомиться в [документации Twitch](https://dev.twitch.tv/docs/api/get-started/)
