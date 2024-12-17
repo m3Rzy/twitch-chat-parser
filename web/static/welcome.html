@@ -39,47 +39,74 @@
             background-color: #6a006a;
             /* Более темный фиолетовый при наведении */
         }
+
+        .input-field {
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Кнопка с ссылкой -->
-    <a href="https://id.twitch.tv/oauth2/authorize?client_id=0cyj81asboibsgbkaxbxbarluyzygy&redirect_uri=http://localhost:8080/callback&response_type=token&scope=chat:read"
-        class="button">
-        Начать
-    </a>
+    <div class="form-container">
+        <input type="text" id="channelName" class="input-field" placeholder="Введите название канала" required />
+        <a href="https://id.twitch.tv/oauth2/authorize?client_id=0cyj81asboibsgbkaxbxbarluyzygy&redirect_uri=http://localhost:8080/callback&response_type=token&scope=chat:read"
+            class="button" onclick="submitForm(event)">Начать</a>
+    </div>
 
     <script>
-        // Функция для извлечения токена из фрагмента URL
+        // Сохранение значения перед редиректом
+        function submitForm(event) {
+            event.preventDefault(); // Останавливаем стандартное поведение ссылки
+            var inputElement = document.getElementById('channelName');
+            localStorage.setItem('channel_name', inputElement.value); // Сохраняем в localStorage
+            window.location.href = event.target.href; // Переходим на Twitch OAuth URL
+        }
+
+        // Функция для извлечения токена и отправки данных на сервер
         function getAccessTokenFromUrl() {
             var hash = window.location.hash.substring(1); // Получаем строку после #
             var params = new URLSearchParams(hash);
             var accessToken = params.get("access_token"); // Извлекаем токен
-            if (accessToken) {
-                // Отправляем токен на сервер
+
+            var channelName = localStorage.getItem('channel_name'); // Получаем сохранённое значение из localStorage
+
+            if (accessToken && channelName) {
                 fetch('/save_token', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ access_token: accessToken })
+                    body: JSON.stringify({
+                        access_token: accessToken,
+                        channel_name: channelName
+                    })
                 }).then(response => {
                     if (response.ok) {
-                        alert('Токен успешно получен!');
-                        // Перенаправляем пользователя на localhost:8080/home
+                        alert('Токен и название канала успешно получены!');
                         window.location.href = "http://localhost:8080/success";
                     }
                 }).catch(error => {
-                    console.error('Ошибка при отправке токена:', error);
+                    console.error('Ошибка при отправке данных:', error);
                 });
+            } else {
+                console.error('Токен или название канала отсутствуют.');
             }
         }
 
-        // Вызываем функцию при загрузке страницы
+        // Вызываем функцию при загрузке страницы, если в URL есть токен
         if (window.location.hash) {
             getAccessTokenFromUrl();
         }
-
     </script>
 </body>
 

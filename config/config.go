@@ -8,6 +8,7 @@ import (
 )
 
 var TOKEN = ""
+var CHANNEL = ""
 
 func GetConfigs() (string, string, string) {
 	err := godotenv.Load("../.env") 
@@ -20,14 +21,9 @@ func GetConfigs() (string, string, string) {
 		log.Fatal("USERNAME not set in .env file")
 	}
 
-	channel := "#" + os.Getenv("CHANNEL")
-	if channel == "#" {
-		log.Fatal("CHANNEL not set in .env file")
-	}
-
 	log.Println("Username:", username)
-	log.Println("Channel:", channel)
+	log.Println("Channel:", CHANNEL)
 	log.Println("Token:", TOKEN)
 
-	return "oauth:" + TOKEN, username, channel
+	return "oauth:" + TOKEN, username, "#" + CHANNEL
 }

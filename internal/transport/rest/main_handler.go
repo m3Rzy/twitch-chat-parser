@@ -6,9 +6,14 @@ import (
 	"log"
 	"net/http"
 	"os"
-
 	"twitch-chat-parser/config"
 )
+
+// Структура для получения токена и названия канала из JSON
+type TokenRequest struct {
+	AccessToken string `json:"access_token"`
+	ChannelName string `json:"channel_name"` // Новое поле для названия канала
+}
 
 // Обработчик для корневого маршрута "/"
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -23,32 +28,29 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filePath)
 }
 
-// Структура для получения токена из JSON
-type TokenRequest struct {
-	AccessToken string `json:"access_token"`
-}
-
-// Обработчик для сохранения токена
-func saveTokenHandler(w http.ResponseWriter, r *http.Request, tokenChannel chan<- string) {
+// Обработчик для сохранения токена и названия канала
+func saveTokenHandler(w http.ResponseWriter, r *http.Request, tokenChannel chan<- string, channel chan<- string) {
 	var req TokenRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
+
 	if err != nil {
 		http.Error(w, "Ошибка чтения данных", http.StatusBadRequest)
 		return
 	}
-
-	// Логируем полученный токен и сохраняем его в конфиг
+	// Логируем полученный токен и название канала
 	config.TOKEN = req.AccessToken
+	config.CHANNEL = req.ChannelName // Сохраняем название канала
 
 	// Отправляем токен через канал
 	tokenChannel <- req.AccessToken
+	channel <- req.ChannelName
 
 	// Ответ клиенту
-	fmt.Fprintf(w, "Токен успешно сохранен: %s", req.AccessToken)
+	fmt.Fprintf(w, "Токен и название канала успешно сохранены: %s, %s", req.AccessToken, req.ChannelName)
 }
 
 // Основной обработчик
-func MainHandler(tokenChannel chan<- string) {
+func MainHandler(tokenChannel chan<- string, channel chan<- string) {
 	// Логируем текущую директорию
 	_, err := os.Getwd()
 	if err != nil {
@@ -57,7 +59,7 @@ func MainHandler(tokenChannel chan<- string) {
 
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/save_token", func(w http.ResponseWriter, r *http.Request) {
-		saveTokenHandler(w, r, tokenChannel) // Передаем канал в обработчик
+		saveTokenHandler(w, r, tokenChannel, channel) // Передаем канал в обработчик
 	})
 	http.HandleFunc("/success", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "../web/static/success.html")

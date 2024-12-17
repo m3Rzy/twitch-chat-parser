@@ -11,16 +11,20 @@ import (
 func main() {
 	// Канал для уведомления о получении токена
 	tokenChannel := make(chan string)
+	channel := make(chan string)
 
 	// Запуск HTTP-сервера в отдельной горутине
 	go func() {
 		log.Println("Запускаем HTTP-сервер...")
-		rest.MainHandler(tokenChannel) // Передаем канал в обработчик
+		rest.MainHandler(tokenChannel, channel) // Передаем канал в обработчик
 	}()
 
 	// Ожидаем, пока не получим токен через канал
 	token := <-tokenChannel
 	log.Printf("Получен токен: %s", token)
+
+	channel_name := <-channel
+	log.Printf("Найден канал стримера: %s", channel_name)
 
 	conn := services.IrcConnection(config.GetConfigs())
 	defer conn.Close()
