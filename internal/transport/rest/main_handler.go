@@ -59,6 +59,9 @@ func MainHandler(tokenChannel chan<- string) {
 	http.HandleFunc("/save_token", func(w http.ResponseWriter, r *http.Request) {
 		saveTokenHandler(w, r, tokenChannel) // Передаем канал в обработчик
 	})
+	http.HandleFunc("/success", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "../web/static/success.html")
+	})
 
 	log.Println("Сервер запущен на :8080")
 	err = http.ListenAndServe(":8080", nil)
