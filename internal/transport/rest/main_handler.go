@@ -6,13 +6,12 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"twitch-chat-parser/config"
 )
 
 // Структура для получения токена и названия канала из JSON
 type TokenRequest struct {
 	AccessToken string `json:"access_token"`
-	ChannelName string `json:"channel_name"` // Новое поле для названия канала
+	ChannelName string `json:"channel_name"`
 }
 
 // Обработчик для корневого маршрута "/"
@@ -37,14 +36,9 @@ func saveTokenHandler(w http.ResponseWriter, r *http.Request, tokenChannel chan<
 		http.Error(w, "Ошибка чтения данных", http.StatusBadRequest)
 		return
 	}
-	// Логируем полученный токен и название канала
-	config.TOKEN = req.AccessToken
-	config.CHANNEL = req.ChannelName // Сохраняем название канала
-
 	// Отправляем токен через канал
 	tokenChannel <- req.AccessToken
 	channel <- req.ChannelName
-
 	// Ответ клиенту
 	fmt.Fprintf(w, "Токен и название канала успешно сохранены: %s, %s", req.AccessToken, req.ChannelName)
 }
