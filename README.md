@@ -32,12 +32,9 @@
 3. **Создайте файл ```.env```**  
 В корневой папке проекта создайте файл .env со следующей структурой:
     ```env
-    USERNAME=your_twitch_username
-    CHANNEL=channel_name
-    TOKEN=your_twitch_oauth_token
+    USERNAME=your_twitch_username # можно указать любое
+    CHANNEL=channel_name # существующий канал на twitch.tv
     ```
-
-> С подробной информацией о получении OAuth токена можно ознакомиться в [документации Twitch](https://dev.twitch.tv/docs/api/get-started/)
 
 ---
 
@@ -47,3 +44,8 @@
 cd .\cmd\
 go run main.go
 ```
+
+1. Перейти по адресу ```http:localhost:8080```
+2. Нажать по кнопке "Начать"
+3. Подтвердить аутентификацию и разрешить доступ к scope:read
+4. **Готово!** _В консоли отображаются сообщения_

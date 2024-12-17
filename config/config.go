@@ -7,6 +7,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var TOKEN = ""
+
 func GetConfigs() (string, string, string) {
 	err := godotenv.Load("../.env") 
 	if err != nil {
@@ -23,14 +25,9 @@ func GetConfigs() (string, string, string) {
 		log.Fatal("CHANNEL not set in .env file")
 	}
 
-	token := "oauth:" + os.Getenv("TOKEN")
-	if token == "oauth:" {
-		log.Fatal("TOKEN not set in .env file")
-	}
-
 	log.Println("Username:", username)
 	log.Println("Channel:", channel)
-	log.Println("Token:", token)
+	log.Println("Token:", TOKEN)
 
-	return token, username, channel
+	return "oauth:" + TOKEN, username, channel
 }
